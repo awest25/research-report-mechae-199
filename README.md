@@ -417,21 +417,43 @@ This method allowed for evaluating which neurons had the highest contribution to
 
 ---
 
-### 4.7 Results and Insights
-The machine learning analysis produced several key findings:
-- Autoencoders improved classification accuracy by **filtering out noise**.
-- Hyperparameter tuning with Optuna led to a **10-15% increase in accuracy**.
-- LOFO analysis identified that **thumb and index finger movement** features were the most critical for task classification.
+### 4.7 Results and Insights: Autoencoder Performance & Finger Ranking Analysis
 
-#### Feature Importance Ranking from LOFO:
-| Feature Removed        | Accuracy Drop |
-|------------------------|--------------|
-| Thumb movements       | TBD%          |
-| Index finger movements | TBD%          |
-| Wrist rotation        | TBD%           |
-| Pinky movements       | TBD%           |
+The autoencoder implementation yielded approximately 30% better results compared to models without autoencoder-based feature learning. This significant performance boost enabled us to grade most FMA tasks with high accuracy, underscoring the autoencoder's strength in filtering out noise and capturing the most critical movement features.
 
-This analysis provided insights into which features were most relevant for predicting FMA hand tasks.
+In addition to the autoencoder's success, we conducted finger ranking analyses using both Fully Connected (FC) and Convolutional Neural Network (CNN) architectures. The results are summarized in the tables below. These rankings indicate the relative importance of each finger (as well as wrist and sensor inputs) in classifying the FMA tasks. Note that some tasks (FMA22 and FMA23) have incomplete data as further experiments are pending.
+
+It is worth mentioning that we observed some unusual trends:
+- In certain cases, the removal of specific finger features actually resulted in better model performance.
+- The base accuracy of some models was considerably lower than what had been achieved in previous benchmarks.
+
+These discrepancies suggest that noise might be influencing the feature importance assessments, and further work is needed to refine our approach and validate these findings.
+
+#### FC Preliminary Rankings Table
+
+| Task  | thumb | pointer | middle | ring | pinky | wrist | sensor |
+|-------|-------|---------|--------|------|-------|-------|--------|
+| FMA17 | 1     | 2       | 3      | 2    | 1     | 1     | 1      |
+| FMA18 | 2     | 2       | 3      | 1    | 2     | 2     | 2      |
+| FMA19 | 2     | 6       | 1      | 5    | 3     | 4     |        |
+| FMA20 | 4     | 6       | 3      | 2    | 5     | 1     |        |
+| FMA21 | 4     | 2       | 3      | 1    | 5     | 1     |        |
+| FMA22 |       |         |        |      |       |       |        |
+| FMA23 |       |         |        |      |       |       |        |
+
+#### CNN Preliminary Rankings Table
+
+| Task  | thumb | pointer | middle | ring | pinky | wrist | sensor |
+|-------|-------|---------|--------|------|-------|-------|--------|
+| FMA17 | 1     | 1       | 1      | 1    | 1     | 1     | 1      |
+| FMA18 | 3     | 3       | 4      | 1    | 2     | 3     | 1      |
+| FMA19 | 2     | 6       | 4      | 3    | 5     | 1     |        |
+| FMA20 | 2     | 1       | 3      | 1    | 1     | 1     |        |
+| FMA21 | 1     | 2       | 4      | 4    | 3     | 2     |        |
+| FMA22 |       |         |        |      |       |       |        |
+| FMA23 |       |         |        |      |       |       |        |
+
+These results form the basis of our ongoing investigation to reduce noise and improve the robustness of our feature selection process.
 
 ---
 
@@ -451,12 +473,15 @@ These results highlight the potential for **data-driven assessment of motor func
 ---
 
 ### 5.2 Challenges and Limitations
+
 Despite the promising results, several challenges remain:
-- **Complexity of video synchronization:** While LED detection and frame alignment techniques worked in controlled settings, practical implementation issues required further refinements.
-- **Integration of patient data:** The dataset currently consists of a small number of patient recordings, limiting the generalizability of results.
+
+- **Complexity of video synchronization:** The original approach relied on LED-based synchronization, but due to practical challenges, including occlusion by the patient’s hand and frame-writing delays, we have transitioned to using the record button on the laptop as the synchronization trigger.
+- **Integration of patient data:** The dataset currently consists of a small number of patient recordings, which limits the generalizability of the results.
 - **High computational costs:** Every change in the pipeline requires running inference on all models across all tasks, leading to long training and evaluation times.
 
 Addressing these challenges will be crucial for making the system more scalable and clinically viable.
+
 
 ---
 
